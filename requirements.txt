@@ -1,0 +1,8 @@
+bs4
+requests
+pandas
+matplotlib
+seaborn
+tabulate
+pillow
+wordcloud
