@@ -6,3 +6,5 @@ seaborn
 tabulate
 pillow
 wordcloud
+lxml
+html5lib
