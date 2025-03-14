@@ -2,6 +2,13 @@
 
 import sqlite3
 import pandas as pd
+import tkinter as tk
+
+
+main_window = tk.Tk()
+main_window .title("Cricketers Database")
+main_window .geometry("800x600")
+
 
 def init_database (filename):
 
@@ -114,3 +121,7 @@ print_all_db (db_cursor)
 fill_with_data_from_html (db_cursor)
 print_all_db (db_cursor)
 
+
+
+# Start Application Window
+main_window.mainloop()
