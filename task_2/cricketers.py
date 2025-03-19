@@ -1,13 +1,9 @@
 # Cricketers Database Program
 
+import os
 import sqlite3
 import pandas as pd
 import tkinter as tk
-
-
-main_window = tk.Tk()
-main_window .title("Cricketers Database")
-main_window .geometry("800x600")
 
 
 def init_database (filename):
@@ -34,6 +30,7 @@ def init_database (filename):
                 ); """
     
     db_cursor.execute(table_sql)
+    db_connection.commit()
     db_cursor.close()
 
 
@@ -41,6 +38,8 @@ def fill_with_data_from_html (db_cursor):
 
     tables = pd.read_html('table.html')
     df = pd.DataFrame(tables[0])
+
+    df.to_csv('cricketers_data.csv', sep=',', encoding='utf-8', index=False)
 
     for index, row in df.iterrows():
         name = row['Player'].split('(')[0].strip()
@@ -62,7 +61,7 @@ def connect_database (filename):
     # Create cursor object
     db_cursor = db_connection.cursor()
 
-    return db_cursor  
+    return db_cursor,db_connection  
 
 
 def find_by_name (db_cursor, name):
@@ -112,16 +111,21 @@ def print_all_db (db_cursor):
 
 
 
+### Main program starts here
+filename = 'cricketers.sqlite3'
 
+if not os.path.exists(filename):
+    print (f"Initialising database {filename}")
+    init_database(filename)
+    db_cursor,db_connection = connect_database(filename)
+    fill_with_data_from_html (db_cursor)
 
-#init_database('cricketers.sqlite3')
-db_cursor = connect_database('cricketers.sqlite3')
-fill_with_data_from_html (db_cursor)
-print_all_db (db_cursor)
-fill_with_data_from_html (db_cursor)
-print_all_db (db_cursor)
-
-
+else:
+    db_cursor,db_connection = connect_database(filename)
 
 # Start Application Window
-main_window.mainloop()
+# main_window.mainloop()
+
+db_connection.commit()
+db_cursor.close()
+

@@ -184,7 +184,7 @@ class RegisterWindow(tk.Frame):
         for widget in self.winfo_children(): 
             widget.destroy()
         self.destroy()
-        WelcomeWindow(self.master)
+        MainWindow(self.master)
  
  
 root = tk.Tk()
