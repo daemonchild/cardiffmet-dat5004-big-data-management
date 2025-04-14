@@ -8,3 +8,5 @@ pillow
 wordcloud
 lxml
 html5lib
+tk
+colorama
