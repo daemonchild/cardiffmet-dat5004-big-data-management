@@ -10,4 +10,5 @@ lxml
 html5lib
 tk
 colorama
+nbconvert
 
