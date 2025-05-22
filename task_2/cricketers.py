@@ -3,7 +3,7 @@
 # Description:  A simple database program to store and retrieve cricketers using SQLite3
 # Author:       Tom Rowan
 # Student ID:   ST20285213
-# Course code:  DAT-5004-S2_24
+# Course code:  DAT5004-S2_24
 # Assignment:   PRAC1 - Task 2
 # Course tutor: Dr. Sandeep Sengar
 # 
@@ -15,7 +15,7 @@ import re
 from datetime import datetime as dt
 
 # Colours
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
 
 # Import Pandas to populate database with demo data
 import pandas as pd
@@ -120,18 +120,6 @@ class Cricketer:
         return ret
 
 
-    table_sql = """ CREATE TABLE Cricketers (
-                id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                name            TEXT(128) NOT NULL,
-                country         TEXT(64) NOT NULL,
-                matches_played  INT(5),
-                runs_scored     INT(6),
-                high_score      INT(4),
-                batting_average REAL(6),
-                year_started    INT(4),
-                year_retired    INT(4)
-                ); """
-
 #
 #       ***** Database Management Functions *****
 #
@@ -206,42 +194,43 @@ def fill_with_data_from_html (db_cursor):
         filehandle = open('table.html')
         tables = pd.read_html(filehandle)
         filehandle.close()
+    
+        if len(tables) > 0:
+            df = pd.DataFrame(tables[0])
+
+            # Write out the data to a CSV file for debugging
+            df.to_csv('cricketers_data.csv', sep=',', encoding='utf-8', index=False)
+
+            # Loop through the dataframe and insert each row into the database
+            for index, row in df.iterrows():
+                name = row['Player'].split('(')[0].strip()
+                countrycode = row['Player'].split('(')[1].replace(")","")
+
+                # Remove the ICC prefix from the country name
+                if "ICC" in countrycode:
+                    countrycode = countrycode.split("/")[1].strip()
+
+                country = country_codes[countrycode]
+
+                matches_played = int(row['Mat'])
+                runs_scored = int(row['Runs'])
+                high_score = int(row['HS'].replace("*", ""))
+                batting_average = float(row['Ave'])
+
+                # Split out the years active from the 'span' column
+                # Eg: 2000-2010
+                year_started = row['Span'].split('-')[0].strip()
+                year_retired = row['Span'].split('-')[1].strip()
+
+                # Create a new Cricketer object
+                new_cricketer = Cricketer(name=name, country=country, matches_played=matches_played, runs_scored=runs_scored, high_score=high_score, batting_average=batting_average, year_started=year_started, year_retired=year_retired)
+                # Insert the new cricketer into the database
+                insert_cricketer (db_cursor, new_cricketer)
+        else:
+            print (Fore.RED + "Error: No tables found..." + Style.RESET_ALL)
+
     except:
-        print (Fore.RED + "Error: Unable to read HTML file. Please check the file exists." + Style.RESET_ALL)
-
-    if len(tables) > 0:
-        df = pd.DataFrame(tables[0])
-
-        # Write out the data to a CSV file for debugging
-        df.to_csv('cricketers_data.csv', sep=',', encoding='utf-8', index=False)
-
-        # Loop through the dataframe and insert each row into the database
-        for index, row in df.iterrows():
-            name = row['Player'].split('(')[0].strip()
-            countrycode = row['Player'].split('(')[1].replace(")","")
-
-            # Remove the ICC prefix from the country name
-            if "ICC" in countrycode:
-                countrycode = countrycode.split("/")[1].strip()
-
-            country = country_codes[countrycode]
-
-            matches_played = int(row['Mat'])
-            runs_scored = int(row['Runs'])
-            high_score = int(row['HS'].replace("*", ""))
-            batting_average = float(row['Ave'])
-
-            # Split out the years active from the 'span' column
-            # Eg: 2000-2010
-            year_started = row['Span'].split('-')[0].strip()
-            year_retired = row['Span'].split('-')[1].strip()
-
-            # Create a new Cricketer object
-            new_cricketer = Cricketer(name=name, country=country, matches_played=matches_played, runs_scored=runs_scored, high_score=high_score, batting_average=batting_average, year_started=year_started, year_retired=year_retired)
-            # Insert the new cricketer into the database
-            insert_cricketer (db_cursor, new_cricketer)
-    else:
-        print (Fore.RED + "Error: No tables found..." + Style.RESET_ALL)
+            print (Fore.RED + "Error: Unable to read HTML file. Please check the file exists." + Style.RESET_ALL)
 
 
 #
@@ -712,11 +701,11 @@ def main_menu (db_cursor, extended = False):
 
 
 
+#
+#       ***** Main Program *****
+#
 
-
-### Main program starts here
-
-# Banner
+# Print the banner
 print ("\n")
 print (Fore.GREEN + Style.BRIGHT + logo + Style.RESET_ALL)
 print (Fore.WHITE + "     by Tom Rowan, ST20285213" + Style.RESET_ALL)
@@ -725,7 +714,7 @@ print ("")
 # Top Level Program Control Variables
 # Set this to True to enable the extended menu options
 EXTENDED_MENU = True
-filename = 'cricketers.sqlite3'
+filename = 'cricketers.db'
 
 if not os.path.exists(filename):
     print (Fore.RED + f"-- Initialising database {filename}" + Style.RESET_ALL)
@@ -740,3 +729,6 @@ main_menu(db_cursor, extended=EXTENDED_MENU)
 db_connection.commit()
 db_cursor.close()
 
+#
+#       ***** END *****
+#
