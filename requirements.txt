@@ -8,7 +8,7 @@ pillow
 wordcloud
 lxml
 html5lib
-tk
 colorama
+unidecode
+chardet
 nbconvert
-

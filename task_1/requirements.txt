@@ -8,6 +8,11 @@ pillow
 wordcloud
 lxml
 html5lib
+colorama
 unidecode
 chardet
+nbconvert
+
+
+
 
