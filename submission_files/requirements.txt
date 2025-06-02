@@ -1,0 +1,15 @@
+bs4
+requests
+pandas
+matplotlib
+seaborn
+tabulate
+pillow
+wordcloud
+lxml
+html5lib
+colorama
+unidecode
+chardet
+pymongo
+nbconvert
