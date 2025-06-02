@@ -11,4 +11,5 @@ html5lib
 colorama
 unidecode
 chardet
+pymongo
 nbconvert
