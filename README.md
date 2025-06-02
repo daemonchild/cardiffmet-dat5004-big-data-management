@@ -13,6 +13,7 @@ This README file includes details on how to access and run each of the three tas
 
 | Filename | Purpose |
 |--|--|
+| README.md | This document |
 | DAT5004-S2_24-Prac1-Task1-ST20285213-TomRowan.ipynb | Task 1 Notebook |
 | DAT5004-S2_24-Prac1-Task2-ST20285213-TomRowan.py | Task 2 Cricketers Database Program |
 | cricketers.db | Sample Database for cricketers program. |
